@@ -17,9 +17,9 @@ describe('CreateUrlUsecase', () => {
   let cacheSpy: jest.SpyInstance;
   let urlRepositorySpy: jest.SpyInstance;
   let userRepositorySpy: jest.SpyInstance;
-  const invalidUserId: string = '123456';
-  const validUserId: string = '000000';
-  const validUser = new User(validUserId, 'test@test.com', 'test');
+  const invalidUserId: number = -1;
+  const validUserId: number = 123456;
+  const validUser = new User(validUserId, 'test@test.com', 'test', 'test');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -32,7 +32,6 @@ describe('CreateUrlUsecase', () => {
     urlRepository = {
       create: jest.fn(),
       findByOriginalUrl: jest.fn(),
-      findByShortUrl: jest.fn(),
     };
     cacheService = {
       get: jest.fn(),
@@ -49,7 +48,8 @@ describe('CreateUrlUsecase', () => {
       getRedisPort: jest.fn(),
       getDomain: jest.fn().mockReturnValue('localhost'),
       getIncrementKey: jest.fn(),
-    };
+      getAppEnv: jest.fn(),
+    } as unknown as jest.Mocked<ConfigurationService>;
     createUrlUsecase = new CreateUrlUsecase(
       urlRepository,
       cacheService,
@@ -61,6 +61,7 @@ describe('CreateUrlUsecase', () => {
   it('should create a new url', async () => {
     const url: CreateUrlDto = {
       originalUrl: 'https://www.google.com',
+      expiresAt: new Date(),
     };
     cacheSpy = jest.spyOn(cacheService, 'incr');
     urlRepositorySpy = jest.spyOn(urlRepository, 'create');
