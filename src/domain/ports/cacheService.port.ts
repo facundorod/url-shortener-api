@@ -1,6 +1,6 @@
 export interface CacheService {
   get(key: string): Promise<string | null>;
-  set(key: string, value: string, ttl: number): Promise<void>;
+  set(key: string, value: string, ttl?: number): Promise<void>;
   delete(key: string): Promise<boolean>;
   incr(key: string): Promise<number>;
   decr(key: string): Promise<number>;
