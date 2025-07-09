@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { UseCaseProxy } from './usecases.proxy';
-import { CreateUrlUsecase } from '@/usecases/createUrl.usecase';
+import { CreateUrlUsecase } from '@/usecases/urls/createUrl.usecase';
 import { UserRepository } from '@/domain/ports/userRepository.port';
 import { ConfigurationService } from '@/domain/ports/configurationService.port';
 import { UrlRepository } from '@/domain/ports/urlRepository.port';
@@ -12,12 +12,14 @@ import { RedisModule } from '../adapters/redis/redis.module';
 import { ConfigurationAdapter } from '../configuration/configuration.adapter';
 import { TypeOrmUserRepository } from '../adapters/repositories/user.repository';
 import { RepositoriesModule } from '../adapters/repositories/repositories.module';
+import { GetUrlUsecase } from '@/usecases/urls/getUrl.usecase';
 
 @Module({
   imports: [ConfigurationModule, RedisModule, RepositoriesModule],
 })
 export class UsecasesProxyModule {
   static readonly CREATE_URL_USECASE = 'CREATE_URL_USECASE';
+  static readonly GET_URL_USECASE = 'GET_URL_USECASE';
   static register(): DynamicModule {
     return {
       module: UsecasesProxyModule,
@@ -45,8 +47,19 @@ export class UsecasesProxyModule {
             TypeOrmUserRepository,
           ],
         },
+        {
+          provide: UsecasesProxyModule.GET_URL_USECASE,
+          useFactory: (
+            urlRepository: UrlRepository,
+            cacheService: CacheService,
+          ) => new UseCaseProxy(new GetUrlUsecase(urlRepository, cacheService)),
+          inject: [TypeOrmUrlRepository, RedisAdapter],
+        },
       ],
-      exports: [UsecasesProxyModule.CREATE_URL_USECASE],
+      exports: [
+        UsecasesProxyModule.CREATE_URL_USECASE,
+        UsecasesProxyModule.GET_URL_USECASE,
+      ],
     };
   }
 }

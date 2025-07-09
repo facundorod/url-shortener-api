@@ -19,7 +19,10 @@ export class TypeOrmUrlRepository implements UrlRepository {
   }
 
   async findByOriginalUrl(originalUrl: string): Promise<Url | null> {
-    const url = await this.urlRepository.findOne({ where: { originalUrl } });
+    const url = await this.urlRepository.findOne({
+      where: { originalUrl },
+      relations: ['createdBy'],
+    });
     if (!url) return null;
     return url.toDomain();
   }
