@@ -1,0 +1,8 @@
+export interface ConfigurationService {
+  getAppEnv(): string;
+  getRedisHost(): string;
+  getRedisPort(): number;
+  getDomain(): string;
+  getIncrementKey(): string;
+  getDatabaseUrl(): string;
+}
