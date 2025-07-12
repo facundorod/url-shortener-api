@@ -4,27 +4,23 @@ import { UseCaseProxy } from '@/infrastructure/usecases-proxy/usecases.proxy';
 import {
   Body,
   Controller,
-  Inject,
   Get,
+  Inject,
   Post,
+  Req,
   UsePipes,
-  BadRequestException,
-  HttpStatus,
-  HttpCode,
-  Query,
 } from '@nestjs/common';
 import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy/usecases-proxy.module';
 import { CreateUrlExpirationIsNotInThePast } from '@/infrastructure/pipes/validation/isNotInThePast.pipe';
-import { GetUrlUsecase } from '@/usecases/urls/getUrl.usecase';
-import { IsValidUrl } from '@/infrastructure/pipes/validation/isValidUrl.pipe';
+import { GetUrlsUsecase } from '@/usecases/urls/getUrls.usecase';
 
 @Controller('urls')
 export class UrlController {
   constructor(
     @Inject(UsecasesProxyModule.CREATE_URL_USECASE)
     private readonly createUrlUseCase: UseCaseProxy<CreateUrlUsecase>,
-    @Inject(UsecasesProxyModule.GET_URL_USECASE)
-    private readonly getUrlUseCase: UseCaseProxy<GetUrlUsecase>,
+    @Inject(UsecasesProxyModule.GET_URLS_USECASE)
+    private readonly getUrlsUseCase: UseCaseProxy<GetUrlsUsecase>,
   ) {}
 
   @Post('')
@@ -35,18 +31,8 @@ export class UrlController {
   }
 
   @Get('')
-  @HttpCode(HttpStatus.TEMPORARY_REDIRECT)
-  async getUrl(
-    @Query('shortUrl', new IsValidUrl()) shortUrl: string,
-  ): Promise<string> {
-    const useCaseInstance = this.getUrlUseCase.getInstance();
-
-    if (!shortUrl) {
-      throw new BadRequestException('Original URL is required');
-    }
-
-    const originalUrl = await useCaseInstance.execute(shortUrl);
-
-    return originalUrl;
+  getUrls(@Req() req: Request) {
+    const useCaseInstance = this.getUrlsUseCase.getInstance();
+    return useCaseInstance.execute(1);
   }
 }
