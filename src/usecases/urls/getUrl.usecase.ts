@@ -8,8 +8,8 @@ export class GetUrlUsecase {
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(originalUrl: string): Promise<string> {
-    const url: string | null = await this.cacheService.get(originalUrl);
+  async execute(id: string): Promise<string> {
+    const url: string | null = await this.cacheService.get(id);
 
     if (url) {
       console.log('cache hit');
@@ -17,18 +17,18 @@ export class GetUrlUsecase {
     }
 
     console.log('cache miss');
-    const urlEntity = await this.urlRepository.findByOriginalUrl(originalUrl);
+    const urlEntity = await this.urlRepository.findById(id);
 
     if (!urlEntity) {
       throw new NotFoundException('Url not found');
     }
 
     await this.cacheService.set(
-      originalUrl,
-      urlEntity.getShortUrl(),
+      id,
+      urlEntity.getOriginalUrl(),
       60 * 60 * 24 * 30, // 30 days
     );
 
-    return urlEntity.getShortUrl();
+    return urlEntity.getOriginalUrl();
   }
 }

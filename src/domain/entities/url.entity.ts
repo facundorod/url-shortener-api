@@ -1,7 +1,7 @@
 import { User } from './user.entity';
 
 export class Url {
-  private id: number;
+  private id: string;
   private shortUrl: string;
   private originalUrl: string;
   private createdBy: User;
@@ -14,7 +14,7 @@ export class Url {
     originalUrl: string,
     createdBy: User,
     expiresAt?: Date,
-    id?: number,
+    id?: string,
   ) {
     this.shortUrl = shortUrl;
     this.originalUrl = originalUrl;
@@ -27,7 +27,7 @@ export class Url {
     }
   }
 
-  getId(): number {
+  getId(): string {
     return this.id;
   }
 

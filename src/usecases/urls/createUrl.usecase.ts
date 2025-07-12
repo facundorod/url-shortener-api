@@ -29,9 +29,15 @@ export class CreateUrlUsecase {
 
     const base62 = Base62Util.generateBase62(nextNumber);
 
-    const shortUrl: string = `https://${this.configurationService.getDomain()}/${base62}`;
+    const shortUrl: string = `${this.configurationService.getDomain()}/${base62}`;
 
-    const newUrl = new Url(shortUrl, url.originalUrl, user);
+    const newUrl = new Url(
+      shortUrl,
+      url.originalUrl,
+      user,
+      url.expiresAt,
+      base62,
+    );
 
     const createdUrl = await this.urlRepository.create(newUrl);
 

@@ -15,7 +15,7 @@ export class ConfigurationAdapter implements ConfigurationService {
     return this.config.getOrThrow<number>('REDIS_PORT');
   }
   getDomain(): string {
-    return this.config.get<string>('DOMAIN') || 'localhost';
+    return this.config.get<string>('DOMAIN') || 'http://localhost:3001';
   }
   getIncrementKey(): string {
     return this.config.getOrThrow<string>('INCREMENT_KEY');

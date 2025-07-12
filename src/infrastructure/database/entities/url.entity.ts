@@ -5,15 +5,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TypeOrmUserEntity } from './user.entity';
 
 @Entity('urls')
 export class TypeOrmUrlEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @Column({ nullable: false, unique: true, primary: true })
+  id: string;
 
   @Column({ nullable: false })
   originalUrl: string;
