@@ -6,13 +6,17 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
   Post,
   Req,
+  Delete,
   UsePipes,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy/usecases-proxy.module';
 import { CreateUrlExpirationIsNotInThePast } from '@/infrastructure/pipes/validation/isNotInThePast.pipe';
 import { GetUrlsUsecase } from '@/usecases/urls/getUrls.usecase';
+import { DeleteUrlUsecase } from '@/usecases/urls/deleteUrl.usecase';
 
 @Controller('urls')
 export class UrlController {
@@ -21,6 +25,8 @@ export class UrlController {
     private readonly createUrlUseCase: UseCaseProxy<CreateUrlUsecase>,
     @Inject(UsecasesProxyModule.GET_URLS_USECASE)
     private readonly getUrlsUseCase: UseCaseProxy<GetUrlsUsecase>,
+    @Inject(UsecasesProxyModule.DELETE_URL_USECASE)
+    private readonly deleteUrlUseCase: UseCaseProxy<DeleteUrlUsecase>,
   ) {}
 
   @Post('')
@@ -34,5 +40,15 @@ export class UrlController {
   getUrls(@Req() req: Request) {
     const useCaseInstance = this.getUrlsUseCase.getInstance();
     return useCaseInstance.execute(1);
+  }
+
+  @Delete(':id')
+  async deleteUrl(@Param('id') id: string) {
+    const useCaseInstance = this.deleteUrlUseCase.getInstance();
+    const result = await useCaseInstance.execute(id, 1);
+    if (result) {
+      return { message: 'URL deleted successfully' };
+    }
+    throw new NotFoundException('URL not found');
   }
 }

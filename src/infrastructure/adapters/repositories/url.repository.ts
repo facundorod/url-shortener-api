@@ -44,4 +44,8 @@ export class TypeOrmUrlRepository implements UrlRepository {
     if (!urls) return [];
     return urls.map(url => url.toDomain());
   }
+
+  async deleteById(id: string): Promise<void> {
+    await this.urlRepository.delete({ id });
+  }
 }

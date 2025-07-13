@@ -19,6 +19,9 @@ describe('GetUrlUsecase', () => {
     urlRepository = {
       create: jest.fn(),
       findByOriginalUrl: jest.fn(),
+      findById: jest.fn(),
+      findByCreatedBy: jest.fn(),
+      deleteById: jest.fn(),
     };
     cacheService = {
       get: jest.fn(),
@@ -34,28 +37,39 @@ describe('GetUrlUsecase', () => {
 
   it('should return the short url from cache', async () => {
     const originalUrl = 'https://www.google.com';
-    const shortUrl = 'https://localhost/123456';
-    cacheService.get.mockResolvedValueOnce(shortUrl);
+    const urlId = '123456';
+
+    cacheService.get.mockResolvedValueOnce(originalUrl);
     cacheSpy = jest.spyOn(cacheService, 'get');
-    const result = await getUrlUsecase.execute(originalUrl);
-    expect(result).toBe(shortUrl);
-    expect(cacheSpy).toHaveBeenCalledWith(originalUrl);
+
+    const result = await getUrlUsecase.execute(urlId);
+
+    expect(result).toBe(originalUrl);
+    expect(cacheSpy).toHaveBeenCalledWith(urlId);
   });
 
   it('should return the short url from database and cache it if it is not in cache', async () => {
     const originalUrl = 'https://www.google.com';
     const shortUrl = 'https://localhost/123456';
-    urlRepositorySpy = jest.spyOn(urlRepository, 'findByOriginalUrl');
-    urlRepository.findByOriginalUrl.mockResolvedValueOnce(
-      new Url(shortUrl, originalUrl, validUser),
+    const urlId = '123456';
+
+    // Mock cache miss
+    cacheService.get.mockResolvedValueOnce(null);
+
+    urlRepositorySpy = jest.spyOn(urlRepository, 'findById');
+    urlRepository.findById.mockResolvedValueOnce(
+      new Url(shortUrl, originalUrl, validUser, new Date(), urlId),
     );
+
     cacheSpy = jest.spyOn(cacheService, 'set');
-    const result = await getUrlUsecase.execute(originalUrl);
-    expect(result).toBe(shortUrl);
-    expect(urlRepositorySpy).toHaveBeenCalledWith(originalUrl);
+
+    const result = await getUrlUsecase.execute(urlId);
+
+    expect(result).toBe(originalUrl);
+    expect(urlRepositorySpy).toHaveBeenCalledWith(urlId);
     expect(cacheSpy).toHaveBeenCalledWith(
+      urlId,
       originalUrl,
-      shortUrl,
       60 * 60 * 24 * 30,
     );
   });
