@@ -2,7 +2,9 @@ import { User } from '@/domain/entities/user.entity';
 import { UserRepository } from '@/domain/ports/userRepository.port';
 import { RegisterUserDto } from '@/domain/dtos/registerUser.dto';
 import { HashService } from '@/domain/ports/hashService.port';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class RegisterUsecase {
   constructor(
     private readonly userRepository: UserRepository,

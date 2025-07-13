@@ -26,4 +26,16 @@ export class ConfigurationAdapter implements ConfigurationService {
   getRedisPassword(): string {
     return this.config.get<string>('REDIS_PASSWORD') || '';
   }
+
+  getSaltValue(): string {
+    return this.config.getOrThrow<string>('SALT_VALUE') || '10';
+  }
+
+  getJwtSecret(): string {
+    return this.config.getOrThrow<string>('JWT_SECRET') || 'secret';
+  }
+
+  getJwtExpiresIn(): string {
+    return this.config.getOrThrow<string>('JWT_EXPIRES_IN') || '1d';
+  }
 }

@@ -10,7 +10,7 @@ export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
-  @MaxLength(20)
+  @MaxLength(80)
   name: string;
 
   @IsEmail()
@@ -20,6 +20,6 @@ export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @MaxLength(20)
+  @MaxLength(80)
   password: string;
 }
