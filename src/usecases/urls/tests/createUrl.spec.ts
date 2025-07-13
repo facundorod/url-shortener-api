@@ -28,6 +28,8 @@ describe('CreateUrlUsecase', () => {
   beforeAll(() => {
     userRepository = {
       findById: jest.fn(),
+      findByEmail: jest.fn(),
+      create: jest.fn(),
     };
     urlRepository = {
       create: jest.fn(),
