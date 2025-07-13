@@ -5,4 +5,5 @@ export interface UrlRepository {
   findByOriginalUrl(originalUrl: string): Promise<Url | null>;
   findById(id: string): Promise<Url | null>;
   findByCreatedBy(createdBy: number): Promise<Url[]>;
+  deleteById(id: string): Promise<void>;
 }

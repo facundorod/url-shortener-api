@@ -14,6 +14,7 @@ import { TypeOrmUserRepository } from '../adapters/repositories/user.repository'
 import { RepositoriesModule } from '../adapters/repositories/repositories.module';
 import { GetUrlUsecase } from '@/usecases/urls/getUrl.usecase';
 import { GetUrlsUsecase } from '@/usecases/urls/getUrls.usecase';
+import { DeleteUrlUsecase } from '@/usecases/urls/deleteUrl.usecase';
 
 @Module({
   imports: [ConfigurationModule, RedisModule, RepositoriesModule],
@@ -22,6 +23,7 @@ export class UsecasesProxyModule {
   static readonly CREATE_URL_USECASE = 'CREATE_URL_USECASE';
   static readonly GET_URL_USECASE = 'GET_URL_USECASE';
   static readonly GET_URLS_USECASE = 'GET_URLS_USECASE';
+  static readonly DELETE_URL_USECASE = 'DELETE_URL_USECASE';
   static register(): DynamicModule {
     return {
       module: UsecasesProxyModule,
@@ -63,11 +65,21 @@ export class UsecasesProxyModule {
             new UseCaseProxy(new GetUrlsUsecase(urlRepository)),
           inject: [TypeOrmUrlRepository],
         },
+        {
+          provide: UsecasesProxyModule.DELETE_URL_USECASE,
+          useFactory: (
+            urlRepository: UrlRepository,
+            cacheService: CacheService,
+          ) =>
+            new UseCaseProxy(new DeleteUrlUsecase(urlRepository, cacheService)),
+          inject: [TypeOrmUrlRepository, RedisAdapter],
+        },
       ],
       exports: [
         UsecasesProxyModule.CREATE_URL_USECASE,
         UsecasesProxyModule.GET_URL_USECASE,
         UsecasesProxyModule.GET_URLS_USECASE,
+        UsecasesProxyModule.DELETE_URL_USECASE,
       ],
     };
   }

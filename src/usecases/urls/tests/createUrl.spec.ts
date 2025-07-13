@@ -32,6 +32,9 @@ describe('CreateUrlUsecase', () => {
     urlRepository = {
       create: jest.fn(),
       findByOriginalUrl: jest.fn(),
+      findById: jest.fn(),
+      findByCreatedBy: jest.fn(),
+      deleteById: jest.fn(),
     };
     cacheService = {
       get: jest.fn(),
@@ -46,7 +49,7 @@ describe('CreateUrlUsecase', () => {
       getDatabaseUrl: jest.fn(),
       getRedisHost: jest.fn(),
       getRedisPort: jest.fn(),
-      getDomain: jest.fn().mockReturnValue('localhost'),
+      getDomain: jest.fn().mockReturnValue('http://localhost'),
       getIncrementKey: jest.fn(),
       getAppEnv: jest.fn(),
     } as unknown as jest.Mocked<ConfigurationService>;
@@ -59,19 +62,23 @@ describe('CreateUrlUsecase', () => {
   });
 
   it('should create a new url', async () => {
+    const expiresAt = new Date();
     const url: CreateUrlDto = {
       originalUrl: 'https://www.google.com',
-      expiresAt: new Date(),
+      expiresAt: expiresAt,
     };
     cacheSpy = jest.spyOn(cacheService, 'incr');
     urlRepositorySpy = jest.spyOn(urlRepository, 'create');
     userRepositorySpy = jest.spyOn(userRepository, 'findById');
     cacheService.incr.mockResolvedValueOnce(1);
     userRepository.findById.mockResolvedValueOnce(validUser);
+
     const expectedUrl = new Url(
-      `https://${configurationService.getDomain()}/${Base62Util.generateBase62(1)}`,
+      `${configurationService.getDomain()}/${Base62Util.generateBase62(1)}`,
       url.originalUrl,
       validUser,
+      expiresAt,
+      '1',
     );
     urlRepository.create.mockResolvedValueOnce(expectedUrl);
 
@@ -80,7 +87,15 @@ describe('CreateUrlUsecase', () => {
     expect(cacheSpy).toHaveBeenCalledWith(
       configurationService.getIncrementKey(),
     );
-    expect(urlRepositorySpy).toHaveBeenCalledWith(expectedUrl);
+    expect(urlRepositorySpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        shortUrl: expectedUrl.getShortUrl(),
+        originalUrl: expectedUrl.getOriginalUrl(),
+        createdBy: expectedUrl.getCreatedBy(),
+        expiresAt: expectedUrl.getExpiresAt(),
+        id: expectedUrl.getId(),
+      }),
+    );
     expect(userRepositorySpy).toHaveBeenCalledWith(validUserId);
   });
 
