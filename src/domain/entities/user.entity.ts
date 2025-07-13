@@ -6,8 +6,15 @@ export class User {
   private createdAt: Date;
   private updatedAt: Date;
 
-  constructor(id: number, name: string, email: string, password: string) {
-    this.id = id;
+  constructor(
+    id: number | null,
+    name: string,
+    email: string,
+    password: string,
+  ) {
+    if (id) {
+      this.id = id;
+    }
     this.name = name;
     this.email = email;
     this.password = password;

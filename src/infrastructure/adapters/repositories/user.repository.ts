@@ -17,4 +17,16 @@ export class TypeOrmUserRepository implements UserRepository {
     if (!user) return null;
     return user.toDomain();
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) return null;
+    return user.toDomain();
+  }
+
+  async create(user: User): Promise<User> {
+    const userEntity = TypeOrmUserEntity.fromDomain(user);
+    const createdUser = await this.userRepository.save(userEntity);
+    return createdUser.toDomain();
+  }
 }

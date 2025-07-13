@@ -5,4 +5,7 @@ export interface ConfigurationService {
   getDomain(): string;
   getIncrementKey(): string;
   getDatabaseUrl(): string;
+  getSaltValue(): string;
+  getJwtSecret(): string;
+  getJwtExpiresIn(): string;
 }
