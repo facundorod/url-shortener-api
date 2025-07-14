@@ -3,6 +3,7 @@ import { User } from '@/domain/entities/user.entity';
 import { LoginUsecase } from '../login.usecase';
 import { HashService } from '@/domain/ports/hashService.port';
 import { EncrypterService } from '@/domain/ports/envrypterService.port';
+import { UserNotExist } from '@/domain/errors/userNotExist.error';
 
 describe('LoginUsecase', () => {
   let loginUsecase: LoginUsecase;
@@ -64,7 +65,7 @@ describe('LoginUsecase', () => {
   it('should throw an error if the user does not exist', async () => {
     userRepository.findByEmail.mockResolvedValueOnce(null);
     await expect(loginUsecase.execute('test@test.com', 'test')).rejects.toThrow(
-      'User not found',
+      UserNotExist,
     );
   });
 });

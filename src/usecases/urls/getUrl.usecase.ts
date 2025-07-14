@@ -1,6 +1,6 @@
 import { CacheService } from '@/domain/ports/cacheService.port';
 import { UrlRepository } from '@/domain/ports/urlRepository.port';
-import { NotFoundException } from '@nestjs/common';
+import { UrlNotFound } from '@/domain/errors/urlNotFound.error';
 
 export class GetUrlUsecase {
   constructor(
@@ -20,7 +20,7 @@ export class GetUrlUsecase {
     const urlEntity = await this.urlRepository.findById(id);
 
     if (!urlEntity) {
-      throw new NotFoundException('Url not found');
+      throw new UrlNotFound();
     }
 
     await this.cacheService.set(

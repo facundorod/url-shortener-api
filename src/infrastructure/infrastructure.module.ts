@@ -7,6 +7,11 @@ import { RedisModule } from './adapters/redis/redis.module';
 import { RepositoriesModule } from './adapters/repositories/repositories.module';
 import { BcryptModule } from './adapters/bcrypt/bcrypt.module';
 import { JsonwebtokenModule } from './adapters/jsonwebtoken/jsonwebtoken.module';
+import { APP_GUARD, Reflector } from '@nestjs/core';
+import { EncrypterService } from '@/domain/ports/envrypterService.port';
+import { AuthGuard } from './guards/auth/auth.guard';
+import { JsonWebTokenAdapter } from './adapters/jsonwebtoken/jsonwebtoken.adapter';
+import { WinstonModule } from './adapters/winston/winston.module';
 
 @Module({
   imports: [
@@ -18,7 +23,17 @@ import { JsonwebtokenModule } from './adapters/jsonwebtoken/jsonwebtoken.module'
     RepositoriesModule,
     BcryptModule,
     JsonwebtokenModule,
+    WinstonModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      inject: [JsonWebTokenAdapter, Reflector],
+      useFactory: (
+        jsonWebTokenAdapter: EncrypterService,
+        reflector: Reflector,
+      ) => new AuthGuard(jsonWebTokenAdapter, reflector),
+    },
+  ],
 })
 export class InfrastructureModule {}
