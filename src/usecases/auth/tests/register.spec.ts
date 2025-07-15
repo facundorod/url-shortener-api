@@ -3,6 +3,7 @@ import { User } from '@/domain/entities/user.entity';
 import { RegisterUsecase } from '../register.usecase';
 import { HashService } from '@/domain/ports/hashService.port';
 import { RegisterUserDto } from '@/domain/dtos/registerUser.dto';
+import { EmailAlreadyExist } from '@/domain/errors/userAlreadyExist.error';
 
 describe('RegisterUsecase', () => {
   let registerUsecase: RegisterUsecase;
@@ -66,7 +67,7 @@ describe('RegisterUsecase', () => {
       new User(1, user.name, user.email, 'hashedPassword'),
     );
     await expect(registerUsecase.execute(user)).rejects.toThrow(
-      'User already exists',
+      EmailAlreadyExist,
     );
   });
 });

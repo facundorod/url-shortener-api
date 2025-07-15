@@ -31,21 +31,30 @@ export class UrlController {
 
   @Post('')
   @UsePipes(new CreateUrlExpirationIsNotInThePast())
-  createUrl(@Body() createUrlDto: CreateUrlDto) {
+  createUrl(
+    @Body() createUrlDto: CreateUrlDto,
+    @Req() req: Request & { user: { id: number } },
+  ) {
     const useCaseInstance = this.createUrlUseCase.getInstance();
-    return useCaseInstance.execute(createUrlDto, 1);
+    const userId = req.user.id;
+    return useCaseInstance.execute(createUrlDto, userId);
   }
 
   @Get('')
-  getUrls(@Req() req: Request) {
+  getUrls(@Req() req: Request & { user: { id: number } }) {
     const useCaseInstance = this.getUrlsUseCase.getInstance();
-    return useCaseInstance.execute(1);
+    const userId = req.user.id;
+    return useCaseInstance.execute(userId);
   }
 
   @Delete(':id')
-  async deleteUrl(@Param('id') id: string) {
+  async deleteUrl(
+    @Param('id') id: string,
+    @Req() req: Request & { user: { id: number } },
+  ) {
     const useCaseInstance = this.deleteUrlUseCase.getInstance();
-    const result = await useCaseInstance.execute(id, 1);
+    const userId = req.user.id;
+    const result = await useCaseInstance.execute(id, userId);
     if (result) {
       return { message: 'URL deleted successfully' };
     }

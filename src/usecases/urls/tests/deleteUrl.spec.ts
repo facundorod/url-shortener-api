@@ -3,6 +3,7 @@ import { DeleteUrlUsecase } from '../deleteUrl.usecase';
 import { CacheService } from '@/domain/ports/cacheService.port';
 import { Url } from '@/domain/entities/url.entity';
 import { User } from '@/domain/entities/user.entity';
+import { UrlNotFound } from '@/domain/errors/urlNotFound.error';
 
 describe('DeleteUrlUsecase', () => {
   let deleteUrlUsecase: DeleteUrlUsecase;
@@ -56,7 +57,7 @@ describe('DeleteUrlUsecase', () => {
     cacheSpy = jest.spyOn(cacheService, 'delete');
     await expect(
       deleteUrlUsecase.execute('123456', validUserId),
-    ).rejects.toThrow('URL not found');
+    ).rejects.toThrow(UrlNotFound);
     expect(urlRepositorySpy).not.toHaveBeenCalled();
     expect(cacheSpy).not.toHaveBeenCalled();
   });

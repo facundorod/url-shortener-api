@@ -3,6 +3,7 @@ import { UserRepository } from '@/domain/ports/userRepository.port';
 import { RegisterUserDto } from '@/domain/dtos/registerUser.dto';
 import { HashService } from '@/domain/ports/hashService.port';
 import { Injectable } from '@nestjs/common';
+import { EmailAlreadyExist } from '@/domain/errors/userAlreadyExist.error';
 
 @Injectable()
 export class RegisterUsecase {
@@ -14,7 +15,7 @@ export class RegisterUsecase {
   async execute(user: RegisterUserDto): Promise<User> {
     const existingUser = await this.userRepository.findByEmail(user.email);
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new EmailAlreadyExist();
     }
     const hashedPassword = await this.hashService.hash(user.password);
     const newUser = new User(null, user.name, user.email, hashedPassword);

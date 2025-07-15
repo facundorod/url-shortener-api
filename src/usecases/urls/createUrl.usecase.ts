@@ -6,7 +6,7 @@ import { Base62Util } from '@/utils/base62.util';
 import { CreateUrlDto } from '@/domain/dtos/createUrl.dto';
 import { UserRepository } from '@/domain/ports/userRepository.port';
 import { User } from '@/domain/entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { UserNotExist } from '@/domain/errors/userNotExist.error';
 
 export class CreateUrlUsecase {
   constructor(
@@ -20,7 +20,7 @@ export class CreateUrlUsecase {
     const user: User | null = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotExist();
     }
 
     const nextNumber = await this.cacheService.incr(

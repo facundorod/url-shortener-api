@@ -5,6 +5,7 @@ import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy/usecases-pr
 import { UseCaseProxy } from '@/infrastructure/usecases-proxy/usecases.proxy';
 import { LoginUsecase } from '@/usecases/auth/login.usecase';
 import { LoginUserDto } from '@/domain/dtos/loginUser.dto';
+import { Public } from '@/infrastructure/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,7 @@ export class AuthController {
     private readonly loginUserUsecase: UseCaseProxy<LoginUsecase>,
   ) {}
 
+  @Public()
   @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto) {
     const result = await this.registerUserUsecase
@@ -23,6 +25,7 @@ export class AuthController {
     return result;
   }
 
+  @Public()
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     const result = await this.loginUserUsecase

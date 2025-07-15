@@ -7,6 +7,7 @@ import { CreateUrlDto } from '@/domain/dtos/createUrl.dto';
 import { Url } from '@/domain/entities/url.entity';
 import { User } from '@/domain/entities/user.entity';
 import { Base62Util } from '@/utils/base62.util';
+import { UserNotExist } from '@/domain/errors/userNotExist.error';
 
 describe('CreateUrlUsecase', () => {
   let createUrlUsecase: CreateUrlUsecase;
@@ -108,7 +109,7 @@ describe('CreateUrlUsecase', () => {
     userRepositorySpy = jest.spyOn(userRepository, 'findById');
     userRepository.findById.mockResolvedValueOnce(null);
     await expect(createUrlUsecase.execute(url, invalidUserId)).rejects.toThrow(
-      'User not found',
+      UserNotExist,
     );
     expect(userRepositorySpy).toHaveBeenCalledWith(invalidUserId);
     expect(urlRepositorySpy).not.toHaveBeenCalled();

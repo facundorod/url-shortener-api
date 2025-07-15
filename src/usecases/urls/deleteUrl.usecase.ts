@@ -1,11 +1,7 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UrlRepository } from '@/domain/ports/urlRepository.port';
 import { CacheService } from '@/domain/ports/cacheService.port';
-
+import { UrlNotFound } from '@/domain/errors/urlNotFound.error';
 @Injectable()
 export class DeleteUrlUsecase {
   constructor(
@@ -15,7 +11,7 @@ export class DeleteUrlUsecase {
 
   async execute(id: string, createdBy: number): Promise<boolean> {
     const url = await this.urlRepository.findById(id);
-    if (!url) throw new NotFoundException('URL not found');
+    if (!url) throw new UrlNotFound();
     if (url.getCreatedBy().getId() !== createdBy)
       throw new ForbiddenException('You are not allowed to delete this URL');
     await this.urlRepository.deleteById(id);
