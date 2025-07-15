@@ -35,6 +35,20 @@ services:
     networks:
       - url-shortener
 
+  url-shortener-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: url-shortener-api
+    ports:
+      - '3001:3000'
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    networks:
+      - url-shortener
 networks:
   url-shortener:
     driver: bridge
