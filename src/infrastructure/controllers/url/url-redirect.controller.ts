@@ -4,6 +4,7 @@ import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy/usecases-pr
 import { GetUrlUsecase } from '@/usecases/urls/getUrl.usecase';
 import { BadRequestException } from '@nestjs/common';
 import { UseCaseProxy } from '@/infrastructure/usecases-proxy/usecases.proxy';
+import { Public } from '@/infrastructure/decorators/public.decorator';
 
 @Controller('')
 export class UrlRedirectController {
@@ -13,6 +14,7 @@ export class UrlRedirectController {
   ) {}
 
   @Get('/:id')
+  @Public()
   async getUrl(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const useCaseInstance = this.getUrlUseCase.getInstance();
 
