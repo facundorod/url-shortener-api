@@ -72,8 +72,16 @@ export class UsecasesProxyModule {
           useFactory: (
             urlRepository: UrlRepository,
             cacheService: CacheService,
-          ) => new UseCaseProxy(new GetUrlUsecase(urlRepository, cacheService)),
-          inject: [TypeOrmUrlRepository, RedisAdapter],
+            configurationService: ConfigurationService,
+          ) =>
+            new UseCaseProxy(
+              new GetUrlUsecase(
+                urlRepository,
+                cacheService,
+                configurationService,
+              ),
+            ),
+          inject: [TypeOrmUrlRepository, RedisAdapter, ConfigurationAdapter],
         },
         {
           provide: UsecasesProxyModule.GET_URLS_USECASE,

@@ -12,9 +12,16 @@ import { EncrypterService } from '@/domain/ports/envrypterService.port';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { JsonWebTokenAdapter } from './adapters/jsonwebtoken/jsonwebtoken.adapter';
 import { WinstonModule } from './adapters/winston/winston.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     DatabaseModule,
     ConfigurationModule,
     ControllersModule,
@@ -33,6 +40,10 @@ import { WinstonModule } from './adapters/winston/winston.module';
         jsonWebTokenAdapter: EncrypterService,
         reflector: Reflector,
       ) => new AuthGuard(jsonWebTokenAdapter, reflector),
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

@@ -8,4 +8,5 @@ export interface ConfigurationService {
   getSaltValue(): string;
   getJwtSecret(): string;
   getJwtExpiresIn(): string;
+  getFrontendUrl(): string;
 }

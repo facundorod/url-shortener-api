@@ -1,11 +1,12 @@
 import { CacheService } from '@/domain/ports/cacheService.port';
+import { ConfigurationService } from '@/domain/ports/configurationService.port';
 import { UrlRepository } from '@/domain/ports/urlRepository.port';
-import { UrlNotFound } from '@/domain/errors/urlNotFound.error';
 
 export class GetUrlUsecase {
   constructor(
     private readonly urlRepository: UrlRepository,
     private readonly cacheService: CacheService,
+    private readonly configService: ConfigurationService,
   ) {}
 
   async execute(id: string): Promise<string> {
@@ -20,7 +21,8 @@ export class GetUrlUsecase {
     const urlEntity = await this.urlRepository.findById(id);
 
     if (!urlEntity) {
-      throw new UrlNotFound();
+      const notFoundUrl = this.configService.getFrontendUrl();
+      return `${notFoundUrl}/not-found`;
     }
 
     await this.cacheService.set(

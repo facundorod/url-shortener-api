@@ -23,15 +23,11 @@ export class UrlRedirectController {
     }
 
     try {
-      const originalUrl = await useCaseInstance.execute(id);
+      const urlToRedirect = await useCaseInstance.execute(id);
 
-      if (!originalUrl) {
-        throw new BadRequestException('URL not found');
-      }
-
-      res.redirect(301, originalUrl);
+      res.redirect(301, urlToRedirect);
     } catch {
-      throw new NotFoundException('Invalid or expired URL');
+      throw new NotFoundException('URL not found');
     }
   }
 }

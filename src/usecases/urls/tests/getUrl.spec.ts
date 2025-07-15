@@ -3,6 +3,7 @@ import { UrlRepository } from '@/domain/ports/urlRepository.port';
 import { GetUrlUsecase } from '../getUrl.usecase';
 import { Url } from '@/domain/entities/url.entity';
 import { User } from '@/domain/entities/user.entity';
+import { ConfigurationService } from '@/domain/ports/configurationService.port';
 
 describe('GetUrlUsecase', () => {
   let getUrlUsecase: GetUrlUsecase;
@@ -10,6 +11,7 @@ describe('GetUrlUsecase', () => {
   let cacheService: jest.Mocked<CacheService>;
   let urlRepositorySpy: jest.SpyInstance;
   let cacheSpy: jest.SpyInstance;
+  let configService: jest.Mocked<ConfigurationService>;
   const validUser = new User(1, 'test@test.com', 'test', 'test');
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,6 +25,15 @@ describe('GetUrlUsecase', () => {
       findByCreatedBy: jest.fn(),
       deleteById: jest.fn(),
     };
+    configService = {
+      getDatabaseUrl: jest.fn(),
+      getRedisHost: jest.fn(),
+      getRedisPort: jest.fn(),
+      getDomain: jest.fn().mockReturnValue('http://localhost'),
+      getIncrementKey: jest.fn(),
+      getAppEnv: jest.fn(),
+      getFrontendUrl: jest.fn().mockReturnValue('http://localhost:3000'),
+    } as unknown as jest.Mocked<ConfigurationService>;
     cacheService = {
       get: jest.fn(),
       set: jest.fn(),
@@ -32,7 +43,11 @@ describe('GetUrlUsecase', () => {
       expire: jest.fn(),
       ttl: jest.fn(),
     };
-    getUrlUsecase = new GetUrlUsecase(urlRepository, cacheService);
+    getUrlUsecase = new GetUrlUsecase(
+      urlRepository,
+      cacheService,
+      configService,
+    );
   });
 
   it('should return the short url from cache', async () => {
@@ -46,6 +61,14 @@ describe('GetUrlUsecase', () => {
 
     expect(result).toBe(originalUrl);
     expect(cacheSpy).toHaveBeenCalledWith(urlId);
+  });
+
+  it('should return the not found url if the url is not found', async () => {
+    const urlId = '123456';
+    cacheService.get.mockResolvedValueOnce(null);
+    urlRepository.findById.mockResolvedValueOnce(null);
+    const result = await getUrlUsecase.execute(urlId);
+    expect(result).toBe('http://localhost:3000/not-found');
   });
 
   it('should return the short url from database and cache it if it is not in cache', async () => {

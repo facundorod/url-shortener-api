@@ -38,4 +38,10 @@ export class ConfigurationAdapter implements ConfigurationService {
   getJwtExpiresIn(): string {
     return this.config.getOrThrow<string>('JWT_EXPIRES_IN') || '1d';
   }
+
+  getFrontendUrl(): string {
+    return (
+      this.config.getOrThrow<string>('FRONTEND_URL') || 'http://localhost:3000'
+    );
+  }
 }

@@ -97,6 +97,7 @@ This structure ensures that the application remains modular, maintainable, and a
 - **Cache**: Redis
 - **Authentication**: JWT
 - **Containerization**: Docker & Docker Compose
+- **Rate limiting**: Throttler Module from NestJS
 
 ## Services Used
 

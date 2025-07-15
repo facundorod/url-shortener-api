@@ -16,6 +16,6 @@ async function bootstrap() {
   });
   app.useGlobalFilters(new AllExceptionFilter(new WinstonLogger()));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3002);
 }
 bootstrap();
