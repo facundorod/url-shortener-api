@@ -41,7 +41,9 @@ services:
       dockerfile: Dockerfile
     container_name: url-shortener-api
     ports:
-      - '3001:3000'
+      - '3001:3001'
+    environment:
+      - PORT=3001
     depends_on:
       - db
       - redis
