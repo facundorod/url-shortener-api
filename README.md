@@ -129,15 +129,15 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 # Database Configuration
-DATABASE_URL=postgresql://postgres:password@localhost:5432/url_shortener
-DB_HOST=localhost
+DATABASE_URL=postgresql://postgres:password@db:5432/url_shortener
+DB_HOST=db
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=password
 DB_NAME=url_shortener
 
 # Redis Configuration
-REDIS_HOST=localhost
+REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_PASSWORD=
 

@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy/usecases-proxy.module';
 import { GetUrlUsecase } from '@/usecases/urls/getUrl.usecase';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UseCaseProxy } from '@/infrastructure/usecases-proxy/usecases.proxy';
 import { Public } from '@/infrastructure/decorators/public.decorator';
 
@@ -30,9 +30,8 @@ export class UrlRedirectController {
       }
 
       res.redirect(301, originalUrl);
-    } catch (error) {
-      console.error('Error redirecting URL:', error);
-      throw new BadRequestException('Invalid or expired URL');
+    } catch {
+      throw new NotFoundException('Invalid or expired URL');
     }
   }
 }
